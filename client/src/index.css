@@ -1,1 +1,310 @@
 @import "tailwindcss";
+
+/* ── @theme: registers colors as Tailwind utilities ──
+   bg-bg, text-muted, bg-accent, border-line, etc. all work now */
+@theme {
+  --color-bg:           #09090f;
+  --color-surface:      #0f0f1a;
+  --color-surface2:     #16162a;
+  --color-line:         #1e1e35;
+  --color-accent:       #7c3aed;
+  --color-accent-dark:  #6d28d9;
+  --color-primary:      #ededfa;
+  --color-muted:        #6b6b8f;
+  --color-danger:       #ef4444;
+}
+
+/* keep these so the custom CSS classes below (.btn, .input etc.) still compile */
+:root {
+  --bg:           var(--color-bg);
+  --surface:      var(--color-surface);
+  --surface-2:    var(--color-surface2);
+  --border:       var(--color-line);
+  --accent:       var(--color-accent);
+  --accent-hover: var(--color-accent-dark);
+  --text:         var(--color-primary);
+  --text-muted:   var(--color-muted);
+  --danger:       var(--color-danger);
+}
+
+/* ── base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+}
+
+input, button, textarea {
+  font-family: inherit;
+}
+
+/* inputs look consistent */
+input:focus {
+  outline: none;
+}
+
+/* thin custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
+}
+
+/* ── reusable classes ── */
+
+/* the main input style used across the app */
+.input {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  transition: border-color 0.15s;
+}
+.input:focus {
+  border-color: var(--accent);
+}
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+/* primary button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.25rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.btn:hover {
+  background: var(--accent-hover);
+}
+.btn:active {
+  transform: scale(0.98);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ghost button (outline style) */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: transparent;
+}
+
+/* card container */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.75rem;
+}
+
+/* ── room page layout ── */
+
+.room-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.room-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.25rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 1rem;
+}
+
+.room-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  flex: 1;
+  min-height: 0; /* needed for grid children to respect overflow */
+}
+
+.room-main {
+  padding: 1rem 1rem 0.75rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.room-sidebar {
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* video wrapper keeps 16:9 ratio */
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ── responsive: stack on mobile ── */
+@media (max-width: 768px) {
+  .room-page {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .room-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .room-main {
+    padding: 0.75rem;
+  }
+
+  .room-sidebar {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    height: 75vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .room-header {
+    padding: 0.6rem 0.85rem;
+  }
+}
+
+/* ── loader animations ── */
+
+/* pulsing ring behind the logo icon */
+@keyframes pulse-ring {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0;   }
+}
+
+.pulse-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse-ring 1.6s ease-out infinite;
+}
+
+/* bouncing dots */
+@keyframes dot-bounce {
+  0%, 80%, 100% { transform: translateY(0);    opacity: 0.35; }
+  40%           { transform: translateY(-6px); opacity: 1;    }
+}
+
+.loader-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.loader-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: dot-bounce 1.2s ease-in-out infinite;
+}
+.loader-dots span:nth-child(2) { animation-delay: 0.15s; }
+.loader-dots span:nth-child(3) { animation-delay: 0.3s;  }
+
+/* ── shimmer skeleton ── */
+
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+
+/* apply .skeleton to any placeholder block */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface)   0%,
+    var(--surface-2) 50%,
+    var(--surface)   100%
+  );
+  background-size: 1200px 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+/* ── sidebar: participants section ── */
+
+/* capped height so chat always gets room */
+.participants-section {
+  flex-shrink: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── sidebar: chat section ── */
+
+.chat-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  scroll-behavior: smooth;
+}
+
+.chat-input-bar {
+  flex-shrink: 0;
+  padding: 0.65rem 0.75rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 0.5rem;
+}
+
+

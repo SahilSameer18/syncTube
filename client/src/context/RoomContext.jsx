@@ -3,46 +3,56 @@ import socket from "../socket";
 
 const RoomContext = createContext(null);
 
-export const RoomProvider = ({ children }) => {
-  const [roomId, setRoomId] = useState(null);
+export function RoomProvider({ children }) {
   const [myRole, setMyRole] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [videoState, setVideoState] = useState({ videoId: null, currentTime: 0, isPlaying: false });
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    // ── room_joined (sent only to me when I join) ──────────────────────────
+    // When I successfully join a room
     socket.on("room_joined", (data) => {
-      setRoomId(data.roomId);
       setMyRole(data.role);
       setParticipants(data.participants);
       setVideoState(data.videoState);
     });
 
-    // ── user_joined / user_left ────────────────────────────────────────────
-    socket.on("user_joined", (data) => setParticipants(data.participants));
-    socket.on("user_left", (data) => setParticipants(data.participants));
+    // Someone else joined
+    socket.on("user_joined", (data) => {
+      setParticipants(data.participants);
+    });
 
-    // ── role updates ──────────────────────────────────────────────────────
+    // Someone left
+    socket.on("user_left", (data) => {
+      setParticipants(data.participants);
+    });
+
+    // Host assigned a new role to someone
     socket.on("role_assigned", (data) => {
       setParticipants(data.participants);
-      // Update my own role if I was the target
+      // update my own role if I was the target
       if (data.userId === socket.id) setMyRole(data.role);
     });
 
-    // ── participant removed ────────────────────────────────────────────────
-    socket.on("participant_removed", (data) => setParticipants(data.participants));
+    // Someone was kicked
+    socket.on("participant_removed", (data) => {
+      setParticipants(data.participants);
+    });
 
-    // ── video state sync ──────────────────────────────────────────────────
-    socket.on("sync_state", (state) => setVideoState(state));
-    socket.on("change_video", ({ videoId }) =>
-      setVideoState((prev) => ({ ...prev, videoId, currentTime: 0, isPlaying: false }))
-    );
+    // Late joiner: server sends current video state on sync_request
+    socket.on("sync_state", (state) => {
+      setVideoState(state);
+    });
 
-    // ── chat ──────────────────────────────────────────────────────────────
-    socket.on("chat_message", (msg) =>
-      setMessages((prev) => [...prev, msg])
-    );
+    // Host changed the video
+    socket.on("change_video", ({ videoId }) => {
+      setVideoState({ videoId, currentTime: 0, isPlaying: false });
+    });
+
+    // Chat message received
+    socket.on("chat_message", (msg) => {
+      setMessages((prev) => [...prev, msg]);
+    });
 
     return () => {
       socket.off("room_joined");
@@ -57,10 +67,11 @@ export const RoomProvider = ({ children }) => {
   }, []);
 
   return (
-    <RoomContext.Provider value={{ roomId, myRole, participants, videoState, setVideoState, messages, socket }}>
+    <RoomContext.Provider value={{ myRole, participants, videoState, setVideoState, messages, socket }}>
       {children}
     </RoomContext.Provider>
   );
-};
+}
 
+// shorthand hook so components don't need to import useContext + RoomContext
 export const useRoom = () => useContext(RoomContext);
