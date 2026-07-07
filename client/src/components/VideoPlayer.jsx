@@ -7,7 +7,7 @@ import { SkeletonBlock } from "./Loader";
 const PLAYER_DIV_ID = "yt-player";
 
 export default function VideoPlayer() {
-  const { videoState, setVideoState } = useRoom();
+  const { videoState, setVideoState, myRole } = useRoom();
   const isSyncing = useRef(false); // prevents echo loop when we apply server events
   const lastLoadedId = useRef(null);
 
@@ -72,6 +72,11 @@ export default function VideoPlayer() {
     <div className="video-wrapper">
       <div id={PLAYER_DIV_ID} className="w-full h-full" />
 
+      {/* Block interaction for participants (Watch-only) */}
+      {myRole === "participant" && (
+        <div className="absolute inset-0 z-20" title="Watch-only mode (Controls disabled)" />
+      )}
+
       {/* shown before any video is loaded */}
       {!videoState.videoId && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
@@ -85,3 +90,4 @@ export default function VideoPlayer() {
     </div>
   );
 }
+

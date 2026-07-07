@@ -22,26 +22,38 @@ export default function Room() {
     socket.connect();
     socket.emit("join_room", { roomId, username });
 
-    socket.on("room_joined", () => setJoined(true));
-
-    socket.on("user_joined", ({ username: name }) => {
-      toast(` ${name} joined the room`);
-    });
-
-    socket.on("user_left", ({ username: name }) => {
-      if (name) toast(` ${name} left the room`);
-    });
-
-    socket.on("role_assigned", ({ userId, role }) => {
-      if (userId === socket.id) toast(` You are now a ${role}`);
-    });
-
-    socket.on("removed_from_room", () => {
+    const onRoomJoined = () => setJoined(true);
+    
+    const onUserJoined = ({ username: name }) => {
+      toast(`👋 ${name} joined the room`);
+    };
+    
+    const onUserLeft = ({ username: name }) => {
+      if (name) toast(`🚪 ${name} left the room`);
+    };
+    
+    const onRoleAssigned = ({ userId, role }) => {
+      if (userId === socket.id) toast(`✨ You are now a ${role}`);
+    };
+    
+    const onRemoved = () => {
       toast.error("You were removed from the room by the host.");
       navigate("/", { replace: true });
-    });
+    };
+
+    socket.on("room_joined", onRoomJoined);
+    socket.on("user_joined", onUserJoined);
+    socket.on("user_left", onUserLeft);
+    socket.on("role_assigned", onRoleAssigned);
+    socket.on("removed_from_room", onRemoved);
 
     return () => {
+      socket.off("room_joined", onRoomJoined);
+      socket.off("user_joined", onUserJoined);
+      socket.off("user_left", onUserLeft);
+      socket.off("role_assigned", onRoleAssigned);
+      socket.off("removed_from_room", onRemoved);
+      
       socket.emit("leave_room");
       socket.disconnect();
     };
