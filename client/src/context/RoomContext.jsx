@@ -38,8 +38,13 @@ export function RoomProvider({ children }) {
     // Host assigned a new role to someone
     socket.on("role_assigned", (data) => {
       setParticipants(data.participants);
-      // update my own role if I was the target
-      if (data.userId === socket.id) setMyRole(data.role);
+      if (data.userId === socket.id) {
+        // I was the target — update my own role
+        setMyRole(data.role);
+      } else if (data.role === "host") {
+        // Someone else just became host — I have been demoted from host to participant
+        setMyRole((prev) => (prev === "host" ? "participant" : prev));
+      }
     });
 
     // Someone was kicked

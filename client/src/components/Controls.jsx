@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRoom } from "../context/RoomContext";
 import socket from "../socket";
 
-// accepts a full YouTube URL or a bare video ID
+// accepts a full YouTube URL (including youtu.be and /shorts/) or a bare video ID
 const extractVideoId = (input) => {
   const str = input.trim();
   try {
     const url = new URL(str);
-    return url.searchParams.get("v") || url.pathname.replace("/", "");
+    // youtu.be/VIDEO_ID
+    if (url.hostname === "youtu.be") {
+      return url.pathname.slice(1);
+    }
+    // youtube.com/shorts/VIDEO_ID
+    const shortsMatch = url.pathname.match(/\/shorts\/([a-zA-Z0-9_-]+)/);
+    if (shortsMatch) return shortsMatch[1];
+    // youtube.com/watch?v=VIDEO_ID
+    return url.searchParams.get("v") || "";
   } catch {
     return str; // assume it's already a raw ID
   }
@@ -16,6 +24,10 @@ const extractVideoId = (input) => {
 export default function Controls() {
   const { myRole, videoState } = useRoom();
   const [url, setUrl] = useState("");
+  // local slider value while dragging — keeps UI smooth without flooding server
+  const [dragging, setDragging] = useState(false);
+  const dragValue = useRef(0);
+  const [localTime, setLocalTime] = useState(0);
 
   const canControl = myRole === "host" || myRole === "moderator";
 
@@ -35,10 +47,21 @@ export default function Controls() {
     }
   };
 
-  const seekTo = (value) => {
+  // Update visual position while dragging without spamming the socket
+  const handleSliderChange = (e) => {
     if (!canControl) return;
-    socket.emit("seek", { time: Number(value) });
+    dragValue.current = Number(e.target.value);
+    setLocalTime(dragValue.current);
   };
+
+  // Only emit the seek when the user releases the slider
+  const handleSliderRelease = () => {
+    if (!canControl) return;
+    socket.emit("seek", { time: dragValue.current });
+    setDragging(false);
+  };
+
+  const displayTime = dragging ? localTime : Math.floor(videoState.currentTime || 0);
 
   return (
     <div className="flex flex-col gap-3">
@@ -57,13 +80,17 @@ export default function Controls() {
           min="0"
           max={videoState.duration || 100}
           step="1"
-          value={Math.floor(videoState.currentTime || 0)}
-          onChange={(e) => seekTo(e.target.value)}
+          value={displayTime}
+          onChange={handleSliderChange}
+          onMouseDown={() => { setDragging(true); }}
+          onTouchStart={() => { setDragging(true); }}
+          onMouseUp={handleSliderRelease}
+          onTouchEnd={handleSliderRelease}
           disabled={!canControl || !videoState.videoId}
         />
 
         <span className="text-xs text-muted min-w-[5.5rem] text-right select-none">
-          {formatTime(videoState.currentTime || 0)} / {formatTime(videoState.duration || 0)}
+          {formatTime(displayTime)} / {formatTime(videoState.duration || 0)}
         </span>
       </div>
 

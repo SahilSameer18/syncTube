@@ -46,6 +46,11 @@ function ParticipantRow({ participant, isHost, isMe }) {
     setMenuOpen(false);
   };
 
+  const transferHost = () => {
+    socket.emit("transfer_host", { targetUserId: participant.userId });
+    setMenuOpen(false);
+  };
+
   const kick = () => {
     socket.emit("remove_participant", { targetUserId: participant.userId });
     setMenuOpen(false);
@@ -54,7 +59,6 @@ function ParticipantRow({ participant, isHost, isMe }) {
   return (
     <div
       className="flex items-center gap-2.5 px-4 py-2 hover:bg-surface2 transition-colors group relative"
-      onMouseLeave={() => setMenuOpen(false)}
     >
       {/* avatar: first letter of username */}
       <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-sm font-bold shrink-0">
@@ -75,20 +79,29 @@ function ParticipantRow({ participant, isHost, isMe }) {
       {/* action menu — only host sees this, not for themselves */}
       {isHost && !isMe && (
         <div className="relative">
+          {/* transparent backdrop for mobile — closes menu when tapping outside */}
+          {menuOpen && (
+            <div
+              className="fixed inset-0 z-10"
+              onClick={() => setMenuOpen(false)}
+            />
+          )}
+
           <button
             onClick={() => setMenuOpen((o) => !o)}
-            className="text-muted hover:text-primary transition-all bg-transparent border-none cursor-pointer text-lg leading-none p-1.5 opacity-80 md:opacity-0 md:group-hover:opacity-100"
+            className="text-muted hover:text-primary transition-all bg-transparent border-none cursor-pointer text-lg leading-none p-1.5 opacity-80 md:opacity-0 md:group-hover:opacity-100 relative z-20"
           >
             ⋯
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 top-7 w-44 bg-surface border border-line rounded-xl shadow-2xl z-20 overflow-hidden">
+            <div className="absolute right-0 top-7 w-48 bg-surface border border-line rounded-xl shadow-2xl z-20 overflow-hidden">
               {participant.role !== "moderator" ? (
                 <MenuItem onClick={() => assignRole("moderator")} label="Make Moderator" icon="🛡️" />
               ) : (
                 <MenuItem onClick={() => assignRole("participant")} label="Remove Mod" icon="👤" />
               )}
+              <MenuItem onClick={transferHost} label="Make Host" icon="👑" />
               <div className="border-t border-line" />
               <MenuItem onClick={kick} label="Remove from room" icon="🚫" danger />
             </div>
@@ -117,5 +130,3 @@ const roleLabel = (role) =>
 
 const roleColor = (role) =>
   ({ host: "text-yellow-400", moderator: "text-blue-400", participant: "text-muted" }[role] ?? "text-muted");
-
-

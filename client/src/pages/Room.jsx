@@ -36,7 +36,12 @@ export default function Room() {
     };
 
     const onRoleAssigned = ({ userId, role }) => {
-      if (userId === socket.id) toast(`✨ You are now a ${role}`);
+      if (userId === socket.id) {
+        if (role === "host") toast("👑 You are now the Host!");
+        else toast(`✨ You are now a ${role}`);
+      } else if (role === "host") {
+        toast("👑 Host was transferred to another participant.");
+      }
     };
 
     const onRemoved = () => {

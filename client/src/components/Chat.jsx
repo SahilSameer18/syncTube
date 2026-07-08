@@ -32,8 +32,8 @@ export default function Chat() {
             No messages yet. Say something! 👋
           </p>
         )}
-        {messages.map((msg, i) => (
-          <ChatMessage key={i} msg={msg} isMe={msg.userId === socket.id} />
+        {messages.map((msg) => (
+          <ChatMessage key={`${msg.userId}-${msg.timestamp}`} msg={msg} isMe={msg.userId === socket.id} />
         ))}
         <div ref={bottomRef} />
       </div>

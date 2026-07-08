@@ -143,6 +143,27 @@ module.exports = (io, socket) => {
     });
   });
 
+  // ── transfer_host ──────────────────────────────────────────────────────────
+  // Host voluntarily passes the Host role to another participant.
+  socket.on("transfer_host", ({ targetUserId }) => {
+    const { roomId } = socket.data;
+    if (!isHost(roomId, socket.id)) return;
+    if (!rooms[roomId].participants[targetUserId]) return;
+    if (targetUserId === socket.id) return;
+
+    // Demote current host to participant
+    rooms[roomId].participants[socket.id].role = "participant";
+    // Promote target to host
+    rooms[roomId].participants[targetUserId].role = "host";
+    rooms[roomId].hostId = targetUserId;
+
+    io.to(roomId).emit("role_assigned", {
+      userId: targetUserId,
+      role: "host",
+      participants: getParticipants(roomId),
+    });
+  });
+
   // ── leave / disconnect ────────────────────────────────────────────────────
   // Handles both intentional leave and browser tab close.
   const handleLeave = () => {
