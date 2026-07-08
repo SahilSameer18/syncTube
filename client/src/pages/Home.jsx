@@ -28,16 +28,9 @@ const extractRoomId = (input) => {
 export default function Home() {
   const navigate = useNavigate();
   const [tab, setTab] = useState("create");
-  const [username, setUsername] = useState(
-    localStorage.getItem("st_username") || "",
-  );
+  const [username, setUsername] = useState("");
   const [roomCode, setRoomCode] = useState("");
   const [error, setError] = useState("");
-
-  const saveUsername = (val) => {
-    setUsername(val);
-    localStorage.setItem("st_username", val);
-  };
 
   const handleCreate = () => {
     if (!username.trim()) return setError("Please enter your name.");
@@ -110,7 +103,7 @@ export default function Home() {
             placeholder="e.g. Alex"
             value={username}
             onChange={(e) => {
-              saveUsername(e.target.value);
+              setUsername(e.target.value);
               clearError();
             }}
             maxLength={20}

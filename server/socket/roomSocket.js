@@ -7,7 +7,7 @@ module.exports = (io, socket) => {
   // Called when a user creates or joins a room.
   // First person to join becomes the host; everyone else is a participant.
   socket.on("join_room", ({ roomId, username }) => {
-    if (!roomId || !username) return;
+    if (!roomId || !username || !username.trim()) return;
 
     // Create the room if it doesn't exist yet
     if (!rooms[roomId]) {
@@ -103,6 +103,10 @@ module.exports = (io, socket) => {
       return socket.emit("error", {
         message: "Only the host can assign roles",
       });
+    if (role !== "moderator" && role !== "participant")
+      return socket.emit("error", {
+        message: "Invalid role specified",
+      });
     if (!rooms[roomId].participants[targetUserId]) return;
 
     rooms[roomId].participants[targetUserId].role = role;
@@ -123,6 +127,7 @@ module.exports = (io, socket) => {
       return socket.emit("error", {
         message: "Only the host can remove participants",
       });
+    if (targetUserId === socket.id) return; // Host cannot kick themselves
 
     // Tell the kicked person before removing them
     const targetSocket = io.sockets.sockets.get(targetUserId);
@@ -143,6 +148,9 @@ module.exports = (io, socket) => {
   const handleLeave = () => {
     const { roomId, username } = socket.data;
     if (!roomId || !rooms[roomId]) return;
+
+    // If this participant is not in the room, they already left
+    if (!rooms[roomId].participants[socket.id]) return;
 
     delete rooms[roomId].participants[socket.id];
 
@@ -172,7 +180,7 @@ module.exports = (io, socket) => {
   socket.on("disconnect", handleLeave);
 };
 
-// ── Helper functions ──────────────────────────────────────────────────────────
+// ── Helper functions 
 
 // Convert participants object to an array for easier use on the frontend
 function getParticipants(roomId) {

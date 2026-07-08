@@ -55,15 +55,15 @@ export default function Controls() {
           className="w-full accent-accent"
           type="range"
           min="0"
-          max={Math.max(videoState.currentTime || 0, 100)}
+          max={videoState.duration || 100}
           step="1"
           value={Math.floor(videoState.currentTime || 0)}
           onChange={(e) => seekTo(e.target.value)}
           disabled={!canControl || !videoState.videoId}
         />
 
-        <span className="text-xs text-muted min-w-[3.5rem] text-right">
-          {formatTime(videoState.currentTime || 0)}
+        <span className="text-xs text-muted min-w-[5.5rem] text-right select-none">
+          {formatTime(videoState.currentTime || 0)} / {formatTime(videoState.duration || 0)}
         </span>
       </div>
 

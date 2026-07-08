@@ -77,7 +77,7 @@ function ParticipantRow({ participant, isHost, isMe }) {
         <div className="relative">
           <button
             onClick={() => setMenuOpen((o) => !o)}
-            className="opacity-0 group-hover:opacity-100 text-muted hover:text-primary transition-all bg-transparent border-none cursor-pointer text-lg leading-none px-1"
+            className="text-muted hover:text-primary transition-all bg-transparent border-none cursor-pointer text-lg leading-none p-1.5 opacity-80 md:opacity-0 md:group-hover:opacity-100"
           >
             ⋯
           </button>

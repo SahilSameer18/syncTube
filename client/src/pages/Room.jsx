@@ -16,10 +16,7 @@ export default function Room() {
   const { myRole, participants } = useRoom();
   const [joined, setJoined] = useState(false);
 
-  const username =
-    location.state?.username ||
-    localStorage.getItem("st_username") ||
-    "Anonymous";
+  const username = location.state?.username || "Anonymous";
 
   useEffect(() => {
     socket.connect();
@@ -31,8 +28,11 @@ export default function Room() {
       toast(`👋 ${name} joined the room`);
     };
 
-    const onUserLeft = ({ username: name }) => {
+    const onUserLeft = ({ username: name, newHostId }) => {
       if (name) toast(`🚪 ${name} left the room`);
+      if (newHostId && newHostId === socket.id) {
+        toast("👑 You are now the host!");
+      }
     };
 
     const onRoleAssigned = ({ userId, role }) => {

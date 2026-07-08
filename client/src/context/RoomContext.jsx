@@ -9,6 +9,7 @@ export function RoomProvider({ children }) {
   const [videoState, setVideoState] = useState({
     videoId: null,
     currentTime: 0,
+    duration: 0,
     isPlaying: false,
   });
   const [messages, setMessages] = useState([]);
@@ -29,6 +30,9 @@ export function RoomProvider({ children }) {
     // Someone left
     socket.on("user_left", (data) => {
       setParticipants(data.participants);
+      if (data.newHostId && data.newHostId === socket.id) {
+        setMyRole("host");
+      }
     });
 
     // Host assigned a new role to someone
@@ -50,7 +54,7 @@ export function RoomProvider({ children }) {
 
     // Host changed the video
     socket.on("change_video", ({ videoId }) => {
-      setVideoState({ videoId, currentTime: 0, isPlaying: false });
+      setVideoState({ videoId, currentTime: 0, duration: 0, isPlaying: false });
     });
 
     socket.on("play", ({ currentTime }) => {
@@ -103,3 +107,5 @@ export function RoomProvider({ children }) {
 
 // shorthand hook so components don't need to import useContext + RoomContext
 export const useRoom = () => useContext(RoomContext);
+
+

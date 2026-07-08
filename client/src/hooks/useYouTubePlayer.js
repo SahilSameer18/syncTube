@@ -1,12 +1,14 @@
 import { useRef, useEffect, useState } from "react";
 
-export default function useYouTubePlayer(containerId, onStateChange) {
+export default function useYouTubePlayer(containerId, onStateChange, onError) {
   const playerRef = useRef(null);
   const onStateChangeRef = useRef(onStateChange);
+  const onErrorRef = useRef(onError);
   const [ready, setReady] = useState(false);
 
-  // keep the callback ref updated without recreating the player
+  // keep the callback refs updated without recreating the player
   onStateChangeRef.current = onStateChange;
+  onErrorRef.current = onError;
 
   useEffect(() => {
     const initPlayer = () => {
@@ -24,8 +26,9 @@ export default function useYouTubePlayer(containerId, onStateChange) {
         },
         events: {
           onReady: () => setReady(true),
-          // always forward to the latest onStateChange via ref
+          // always forward to the latest handlers via refs
           onStateChange: (e) => onStateChangeRef.current(e),
+          onError: (e) => onErrorRef.current && onErrorRef.current(e),
         },
       });
     };
@@ -45,3 +48,4 @@ export default function useYouTubePlayer(containerId, onStateChange) {
 
   return { playerRef, ready };
 }
+

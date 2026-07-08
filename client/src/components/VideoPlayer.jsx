@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import toast from "react-hot-toast";
 import { useRoom } from "../context/RoomContext";
 import socket from "../socket";
 import useYouTubePlayer from "../hooks/useYouTubePlayer";
@@ -26,7 +27,20 @@ export default function VideoPlayer() {
     }
   };
 
-  const { playerRef, ready } = useYouTubePlayer(PLAYER_DIV_ID, handleStateChange);
+  const handlePlayerError = (event) => {
+    const errorCode = event.data;
+    let message = "An error occurred while playing this video.";
+    if (errorCode === 2) {
+      message = "Invalid YouTube video URL or ID.";
+    } else if (errorCode === 100) {
+      message = "YouTube video not found (private or removed).";
+    } else if (errorCode === 101 || errorCode === 150) {
+      message = "Playback in embedded players is disabled by the owner.";
+    }
+    toast.error(message, { id: "yt-player-error" });
+  };
+
+  const { playerRef, ready } = useYouTubePlayer(PLAYER_DIV_ID, handleStateChange, handlePlayerError);
 
   // load video when videoId changes (host changed it, or late joiner syncing)
   useEffect(() => {
@@ -53,19 +67,105 @@ export default function VideoPlayer() {
     const sync = (fn) => {
       isSyncing.current = true;
       fn();
-      setTimeout(() => { isSyncing.current = false; }, 300);
+      setTimeout(() => { isSyncing.current = false; }, 800);
     };
 
-    socket.on("play",  ({ currentTime }) => { if (playerRef.current) sync(() => { playerRef.current.seekTo(currentTime, true); playerRef.current.playVideo(); }); });
-    socket.on("pause", ({ currentTime }) => { if (playerRef.current) sync(() => { playerRef.current.seekTo(currentTime, true); playerRef.current.pauseVideo(); }); });
-    socket.on("seek",  ({ time })        => { if (playerRef.current) sync(() => playerRef.current.seekTo(time, true)); });
+    socket.on("play", ({ currentTime }) => {
+      if (!playerRef.current) return;
+      const player = playerRef.current;
+      const currentState = typeof player.getPlayerState === "function" ? player.getPlayerState() : null;
+      const YT = window.YT?.PlayerState;
+      if (!YT) return;
 
-    return () => { socket.off("play"); socket.off("pause"); socket.off("seek"); };
+      const localTime = player.getCurrentTime();
+      const timeDiff = Math.abs(localTime - currentTime);
+
+      if (currentState !== YT.PLAYING || timeDiff > 1.5) {
+        sync(() => {
+          if (timeDiff > 1.5) {
+            player.seekTo(currentTime, true);
+          }
+          if (currentState !== YT.PLAYING) {
+            player.playVideo();
+          }
+        });
+      }
+    });
+
+    socket.on("pause", ({ currentTime }) => {
+      if (!playerRef.current) return;
+      const player = playerRef.current;
+      const currentState = typeof player.getPlayerState === "function" ? player.getPlayerState() : null;
+      const YT = window.YT?.PlayerState;
+      if (!YT) return;
+
+      const localTime = player.getCurrentTime();
+      const timeDiff = Math.abs(localTime - currentTime);
+
+      if (currentState !== YT.PAUSED || timeDiff > 1.5) {
+        sync(() => {
+          if (timeDiff > 1.5) {
+            player.seekTo(currentTime, true);
+          }
+          if (currentState !== YT.PAUSED) {
+            player.pauseVideo();
+          }
+        });
+      }
+    });
+
+    socket.on("seek", ({ time }) => {
+      if (!playerRef.current) return;
+      const player = playerRef.current;
+      const localTime = player.getCurrentTime();
+      const timeDiff = Math.abs(localTime - time);
+
+      if (timeDiff > 1.5) {
+        sync(() => {
+          player.seekTo(time, true);
+        });
+      }
+    });
+
+    return () => {
+      socket.off("play");
+      socket.off("pause");
+      socket.off("seek");
+    };
   }, [ready]);
 
   // late joiner: ask server for the current video state once the player is ready
   useEffect(() => {
     if (ready) socket.emit("sync_request");
+  }, [ready]);
+
+  // track player current time and duration locally while playing
+  useEffect(() => {
+    if (!ready || !playerRef.current) return;
+
+    const interval = setInterval(() => {
+      const player = playerRef.current;
+      if (player && typeof player.getCurrentTime === "function" && typeof player.getDuration === "function") {
+        try {
+          const current = player.getCurrentTime() || 0;
+          const dur = player.getDuration() || 0;
+
+          // Only update state if values actually changed to minimize rendering overhead
+          setVideoState((prev) => {
+            if (Math.abs(prev.currentTime - current) < 0.2 && prev.duration === dur) return prev;
+            return {
+              ...prev,
+              currentTime: current,
+              duration: dur,
+            };
+          });
+        } catch (e) {
+          // ignore potential errors if player is not fully initialized yet
+        }
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
   }, [ready]);
 
   return (
@@ -90,4 +190,5 @@ export default function VideoPlayer() {
     </div>
   );
 }
+
 
