@@ -1,6 +1,6 @@
 # SyncTube 🎬
 
-Watch YouTube videos together in real time. Rooms, roles, sync, and chat — all included.
+Watch YouTube videos together in real time. Rooms, roles, sync, and chat - all included.
 
 ## Live Demo
 
@@ -11,18 +11,18 @@ Watch YouTube videos together in real time. Rooms, roles, sync, and chat — all
 ## Features
 
 - **Create or join a room** with a 6-character room code or a shared room link
-- **Real-time sync** — play, pause, seek, and change video stay in sync for all participants
-- **Role system** — Host, Moderator, Participant
+- **Real-time sync** - play, pause, seek, and change video stay in sync for all participants
+- **Role system** - Host, Moderator, Participant
   - Host has full control: playback, change video, assign roles, remove participants, transfer host
   - Moderators can control playback and change the video
   - Participants can only watch
-- **Manual host transfer** — Host can voluntarily pass the Host role to any participant
-- **Auto host transfer** — if the host leaves, the next person in the room becomes host automatically
+- **Manual host transfer** - Host can voluntarily pass the Host role to any participant
+- **Auto host transfer** - if the host leaves, the next person in the room becomes host automatically
 - **Live chat** inside each room
 - **Toast notifications** for join/leave/role/kick events
-- **Late joiner sync** — joining an active room catches you up to the current video state
-- **YouTube error feedback** — invalid, private, or embed-blocked videos show a clear error message
-- **Supports all YouTube URL formats** — full URLs, `youtu.be` short links, `/shorts/`, or bare video IDs
+- **Late joiner sync** - joining an active room catches you up to the current video state
+- **YouTube error feedback** - invalid, private, or embed-blocked videos show a clear error message
+- **Supports all YouTube URL formats** - full URLs, `youtu.be` short links, `/shorts/`, or bare video IDs
 
 ---
 
@@ -45,8 +45,8 @@ syncTube/
 ├── client/                     # Frontend (React + Vite)
 │   ├── src/
 │   │   ├── components/         # Chat, Controls, ParticipantList, VideoPlayer, Loader
-│   │   ├── context/            # RoomContext — global room state
-│   │   ├── hooks/              # useYouTubePlayer — YT IFrame API wrapper
+│   │   ├── context/            # RoomContext - global room state
+│   │   ├── hooks/              # useYouTubePlayer - YT IFrame API wrapper
 │   │   ├── pages/              # Home, Room, NotFound
 │   │   ├── App.jsx             # Routes & Toast provider
 │   │   ├── index.css           # Global styles & Tailwind design tokens
@@ -223,3 +223,5 @@ Roles are enforced **on the server** in `roomSocket.js` — not just the UI. Eve
 ---
 
 Developed by: Sahil Sameer Siddique
+
+
