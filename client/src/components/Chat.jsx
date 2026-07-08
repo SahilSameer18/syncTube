@@ -9,7 +9,9 @@ export default function Chat() {
 
   // scroll to bottom whenever a new message arrives
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > 0) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
   }, [messages]);
 
   const sendMessage = () => {

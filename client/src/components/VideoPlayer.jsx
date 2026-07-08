@@ -179,7 +179,7 @@ export default function VideoPlayer() {
 
       {/* shown before any video is loaded */}
       {!videoState.videoId && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-bg">
           <SkeletonBlock height="100%" width="100%" style={{ position: "absolute", inset: 0, borderRadius: 0, opacity: 0.6 }} />
           <div className="relative z-10 flex flex-col items-center gap-2 text-center px-4">
             <span className="text-4xl opacity-30">▶</span>
@@ -190,5 +190,4 @@ export default function VideoPlayer() {
     </div>
   );
 }
-
 

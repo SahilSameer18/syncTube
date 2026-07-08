@@ -78,15 +78,7 @@ function ParticipantRow({ participant, isHost, isMe }) {
 
       {/* action menu — only host sees this, not for themselves */}
       {isHost && !isMe && (
-        <div className="relative">
-          {/* transparent backdrop for mobile — closes menu when tapping outside */}
-          {menuOpen && (
-            <div
-              className="fixed inset-0 z-10"
-              onClick={() => setMenuOpen(false)}
-            />
-          )}
-
+        <>
           <button
             onClick={() => setMenuOpen((o) => !o)}
             className="text-muted hover:text-primary transition-all bg-transparent border-none cursor-pointer text-lg leading-none p-1.5 opacity-80 md:opacity-0 md:group-hover:opacity-100 relative z-20"
@@ -95,18 +87,33 @@ function ParticipantRow({ participant, isHost, isMe }) {
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 top-7 w-48 bg-surface border border-line rounded-xl shadow-2xl z-20 overflow-hidden">
-              {participant.role !== "moderator" ? (
-                <MenuItem onClick={() => assignRole("moderator")} label="Make Moderator" icon="🛡️" />
-              ) : (
-                <MenuItem onClick={() => assignRole("participant")} label="Remove Mod" icon="👤" />
-              )}
-              <MenuItem onClick={transferHost} label="Make Host" icon="👑" />
-              <div className="border-t border-line" />
-              <MenuItem onClick={kick} label="Remove from room" icon="🚫" danger />
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+              onClick={() => setMenuOpen(false)}
+            >
+              <div
+                className="w-full max-w-[240px] bg-surface border border-line rounded-xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="px-3 py-2.5 border-b border-line bg-surface2">
+                  <p className="text-xs font-semibold text-muted uppercase tracking-wider">
+                    Manage {participant.username}
+                  </p>
+                </div>
+                <div className="flex flex-col py-1">
+                  {participant.role !== "moderator" ? (
+                    <MenuItem onClick={() => assignRole("moderator")} label="Make Moderator" icon="🛡️" />
+                  ) : (
+                    <MenuItem onClick={() => assignRole("participant")} label="Remove Mod" icon="👤" />
+                  )}
+                  <MenuItem onClick={transferHost} label="Make Host" icon="👑" />
+                  <div className="border-t border-line my-1" />
+                  <MenuItem onClick={kick} label="Remove from room" icon="🚫" danger />
+                </div>
+              </div>
             </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );
