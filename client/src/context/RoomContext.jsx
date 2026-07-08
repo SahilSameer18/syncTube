@@ -6,7 +6,11 @@ const RoomContext = createContext(null);
 export function RoomProvider({ children }) {
   const [myRole, setMyRole] = useState(null);
   const [participants, setParticipants] = useState([]);
-  const [videoState, setVideoState] = useState({ videoId: null, currentTime: 0, isPlaying: false });
+  const [videoState, setVideoState] = useState({
+    videoId: null,
+    currentTime: 0,
+    isPlaying: false,
+  });
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -49,6 +53,18 @@ export function RoomProvider({ children }) {
       setVideoState({ videoId, currentTime: 0, isPlaying: false });
     });
 
+    socket.on("play", ({ currentTime }) => {
+      setVideoState((prev) => ({ ...prev, currentTime, isPlaying: true }));
+    });
+
+    socket.on("pause", ({ currentTime }) => {
+      setVideoState((prev) => ({ ...prev, currentTime, isPlaying: false }));
+    });
+
+    socket.on("seek", ({ time }) => {
+      setVideoState((prev) => ({ ...prev, currentTime: time }));
+    });
+
     // Chat message received
     socket.on("chat_message", (msg) => {
       setMessages((prev) => [...prev, msg]);
@@ -62,12 +78,24 @@ export function RoomProvider({ children }) {
       socket.off("participant_removed");
       socket.off("sync_state");
       socket.off("change_video");
+      socket.off("play");
+      socket.off("pause");
+      socket.off("seek");
       socket.off("chat_message");
     };
   }, []);
 
   return (
-    <RoomContext.Provider value={{ myRole, participants, videoState, setVideoState, messages, socket }}>
+    <RoomContext.Provider
+      value={{
+        myRole,
+        participants,
+        videoState,
+        setVideoState,
+        messages,
+        socket,
+      }}
+    >
       {children}
     </RoomContext.Provider>
   );

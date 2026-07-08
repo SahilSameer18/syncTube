@@ -16,29 +16,36 @@ export default function Room() {
   const { myRole, participants } = useRoom();
   const [joined, setJoined] = useState(false);
 
-  const username = location.state?.username || localStorage.getItem("st_username") || "Anonymous";
+  const username =
+    location.state?.username ||
+    localStorage.getItem("st_username") ||
+    "Anonymous";
 
   useEffect(() => {
     socket.connect();
     socket.emit("join_room", { roomId, username });
 
     const onRoomJoined = () => setJoined(true);
-    
+
     const onUserJoined = ({ username: name }) => {
       toast(`👋 ${name} joined the room`);
     };
-    
+
     const onUserLeft = ({ username: name }) => {
       if (name) toast(`🚪 ${name} left the room`);
     };
-    
+
     const onRoleAssigned = ({ userId, role }) => {
       if (userId === socket.id) toast(`✨ You are now a ${role}`);
     };
-    
+
     const onRemoved = () => {
       toast.error("You were removed from the room by the host.");
       navigate("/", { replace: true });
+    };
+
+    const onError = ({ message }) => {
+      if (message) toast.error(message);
     };
 
     socket.on("room_joined", onRoomJoined);
@@ -46,6 +53,7 @@ export default function Room() {
     socket.on("user_left", onUserLeft);
     socket.on("role_assigned", onRoleAssigned);
     socket.on("removed_from_room", onRemoved);
+    socket.on("error", onError);
 
     return () => {
       socket.off("room_joined", onRoomJoined);
@@ -53,14 +61,20 @@ export default function Room() {
       socket.off("user_left", onUserLeft);
       socket.off("role_assigned", onRoleAssigned);
       socket.off("removed_from_room", onRemoved);
-      
+      socket.off("error", onError);
+
       socket.emit("leave_room");
       socket.disconnect();
     };
   }, []);
 
   if (!joined) {
-    return <Loader message="Joining Room" submessage="Getting your watch party ready..." />;
+    return (
+      <Loader
+        message="Joining Room"
+        submessage="Getting your watch party ready..."
+      />
+    );
   }
 
   return (
@@ -68,7 +82,9 @@ export default function Room() {
       <header className="room-header">
         <div className="flex items-center gap-3 min-w-0">
           <span className="text-accent font-bold text-lg">▶</span>
-          <span className="font-bold text-primary hidden sm:block">SyncTube</span>
+          <span className="font-bold text-primary hidden sm:block">
+            SyncTube
+          </span>
           <span className="text-line hidden sm:block">|</span>
           <RoomCode roomId={roomId} />
         </div>
@@ -84,7 +100,11 @@ export default function Room() {
           )}
           <button
             className="btn btn-ghost text-sm px-3 py-1.5"
-            onClick={() => { socket.emit("leave_room"); socket.disconnect(); navigate("/"); }}
+            onClick={() => {
+              socket.emit("leave_room");
+              socket.disconnect();
+              navigate("/");
+            }}
           >
             Leave
           </button>
@@ -128,7 +148,12 @@ function RoomCode({ roomId }) {
 }
 
 const roleLabel = (role) =>
-  ({ host: "👑 Host", moderator: "🛡️ Mod", participant: "👤 Viewer" }[role] || "");
+  ({ host: "👑 Host", moderator: "🛡️ Mod", participant: "👤 Viewer" })[role] ||
+  "";
 
 const roleClass = (role) =>
-  ({ host: "text-yellow-400", moderator: "text-blue-400", participant: "text-muted" }[role] || "text-muted");
+  ({
+    host: "text-yellow-400",
+    moderator: "text-blue-400",
+    participant: "text-muted",
+  })[role] || "text-muted";

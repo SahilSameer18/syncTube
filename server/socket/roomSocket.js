@@ -3,7 +3,6 @@
 const rooms = require("../utils/roomStore");
 
 module.exports = (io, socket) => {
-
   // ── join_room ─────────────────────────────────────────────────────────────
   // Called when a user creates or joins a room.
   // First person to join becomes the host; everyone else is a participant.
@@ -44,7 +43,6 @@ module.exports = (io, socket) => {
     });
   });
 
-
   // ── play ──────────────────────────────────────────────────────────────────
   // Host or Moderator pressed play. Update state and broadcast to others.
   socket.on("play", ({ currentTime }) => {
@@ -54,10 +52,8 @@ module.exports = (io, socket) => {
     rooms[roomId].videoState.isPlaying = true;
     rooms[roomId].videoState.currentTime = currentTime;
 
-    // We use socket.to() instead of io.to() so the sender doesn't receive their own event
-    socket.to(roomId).emit("play", { currentTime });
+    io.to(roomId).emit("play", { currentTime });
   });
-
 
   // ── pause ─────────────────────────────────────────────────────────────────
   socket.on("pause", ({ currentTime }) => {
@@ -66,9 +62,8 @@ module.exports = (io, socket) => {
 
     rooms[roomId].videoState.isPlaying = false;
     rooms[roomId].videoState.currentTime = currentTime;
-    socket.to(roomId).emit("pause", { currentTime });
+    io.to(roomId).emit("pause", { currentTime });
   });
-
 
   // ── seek ──────────────────────────────────────────────────────────────────
   // When a user scrubs the video timeline, everyone else jumps to that position.
@@ -77,9 +72,8 @@ module.exports = (io, socket) => {
     if (!canControl(roomId, socket.id)) return;
 
     rooms[roomId].videoState.currentTime = time;
-    socket.to(roomId).emit("seek", { time });
+    io.to(roomId).emit("seek", { time });
   });
-
 
   // ── change_video ──────────────────────────────────────────────────────────
   // Load a new YouTube video for the whole room and reset playback state.
@@ -92,7 +86,6 @@ module.exports = (io, socket) => {
     io.to(roomId).emit("change_video", { videoId });
   });
 
-
   // ── sync_request ──────────────────────────────────────────────────────────
   // A late joiner asks: "what's the current video state?"
   // We reply only to that socket with the current videoState.
@@ -102,12 +95,14 @@ module.exports = (io, socket) => {
     socket.emit("sync_state", rooms[roomId].videoState);
   });
 
-
   // ── assign_role ───────────────────────────────────────────────────────────
   // Host promotes/demotes a participant (e.g. participant → moderator).
   socket.on("assign_role", ({ targetUserId, role }) => {
     const { roomId } = socket.data;
-    if (!isHost(roomId, socket.id)) return socket.emit("error", { message: "Only the host can assign roles" });
+    if (!isHost(roomId, socket.id))
+      return socket.emit("error", {
+        message: "Only the host can assign roles",
+      });
     if (!rooms[roomId].participants[targetUserId]) return;
 
     rooms[roomId].participants[targetUserId].role = role;
@@ -120,12 +115,14 @@ module.exports = (io, socket) => {
     });
   });
 
-
   // ── remove_participant ────────────────────────────────────────────────────
   // Host kicks someone out of the room.
   socket.on("remove_participant", ({ targetUserId }) => {
     const { roomId } = socket.data;
-    if (!isHost(roomId, socket.id)) return socket.emit("error", { message: "Only the host can remove participants" });
+    if (!isHost(roomId, socket.id))
+      return socket.emit("error", {
+        message: "Only the host can remove participants",
+      });
 
     // Tell the kicked person before removing them
     const targetSocket = io.sockets.sockets.get(targetUserId);
@@ -140,7 +137,6 @@ module.exports = (io, socket) => {
       participants: getParticipants(roomId),
     });
   });
-
 
   // ── leave / disconnect ────────────────────────────────────────────────────
   // Handles both intentional leave and browser tab close.
@@ -175,7 +171,6 @@ module.exports = (io, socket) => {
   socket.on("leave_room", handleLeave);
   socket.on("disconnect", handleLeave);
 };
-
 
 // ── Helper functions ──────────────────────────────────────────────────────────
 
