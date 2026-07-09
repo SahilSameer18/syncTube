@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { RoomProvider } from "./context/RoomContext";
 import Home from "./pages/Home";
+import Lobby from "./pages/Lobby";
 import Room from "./pages/Room";
 import NotFound from "./pages/NotFound";
 
@@ -11,6 +12,7 @@ function App() {
       <RoomProvider>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/lobby" element={<Lobby />} />
           <Route path="/room/:roomId" element={<Room />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

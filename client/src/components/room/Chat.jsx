@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { useRoom } from "../context/RoomContext";
-import socket from "../socket";
+import { useRoom } from "../../context/RoomContext";
+import socket from "../../socket";
 
 export default function Chat() {
   const { messages } = useRoom();

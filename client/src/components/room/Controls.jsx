@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
-import { useRoom } from "../context/RoomContext";
-import socket from "../socket";
+import { useRoom } from "../../context/RoomContext";
+import socket from "../../socket";
 
 // accepts a full YouTube URL (including youtu.be and /shorts/) or a bare video ID
 const extractVideoId = (input) => {

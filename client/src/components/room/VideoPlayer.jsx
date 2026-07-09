@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-import { useRoom } from "../context/RoomContext";
-import socket from "../socket";
-import useYouTubePlayer from "../hooks/useYouTubePlayer";
-import { SkeletonBlock } from "./Loader";
+import { useRoom } from "../../context/RoomContext";
+import socket from "../../socket";
+import useYouTubePlayer from "../../hooks/useYouTubePlayer";
+import { SkeletonBlock } from "../Loader";
 
 const PLAYER_DIV_ID = "yt-player";
 

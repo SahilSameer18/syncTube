@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useRoom } from "../context/RoomContext";
-import socket from "../socket";
-import { ParticipantSkeleton } from "./Loader";
+import { useRoom } from "../../context/RoomContext";
+import socket from "../../socket";
+import { ParticipantSkeleton } from "../Loader";
 
 export default function ParticipantList() {
   const { myRole, participants } = useRoom();
