@@ -1,6 +1,6 @@
 # SyncTube 🎬
 
-Watch YouTube videos together in real time. Rooms, roles, sync, and chat — all included.
+Watch YouTube videos together in real time. Rooms, roles, sync, and chat - all included.
 
 [![React](https://img.shields.io/badge/React-19.2.7-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8.1.1-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev/)
