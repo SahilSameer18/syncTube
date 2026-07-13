@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useRoom } from "../../context/RoomContext";
 import socket from "../../socket";
+import { Play, Pause, Search, Link } from "lucide-react";
 
 // accepts a full YouTube URL (including youtu.be and /shorts/) or a bare video ID
 const extractVideoId = (input) => {
@@ -64,52 +65,69 @@ export default function Controls() {
   const displayTime = dragging ? localTime : Math.floor(videoState.currentTime || 0);
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex gap-2 items-center">
+    <div className="flex flex-col gap-4 bg-black/20 p-4 sm:p-5 rounded-2xl border border-white/5 backdrop-blur-md shadow-xl mt-4">
+      {/* Player Controls Row */}
+      <div className="flex gap-4 items-center">
         <button
-          className="btn shrink-0"
+          className="w-12 h-12 rounded-full bg-accent hover:bg-accent-dark text-white flex items-center justify-center shrink-0 shadow-lg shadow-accent/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
           onClick={togglePlayback}
           disabled={!canControl || !videoState.videoId}
+          title={videoState.isPlaying ? "Pause" : "Play"}
         >
-          {videoState.isPlaying ? "Pause" : "Play"}
+          {videoState.isPlaying ? (
+            <Pause className="w-5 h-5 fill-white" />
+          ) : (
+            <Play className="w-5 h-5 fill-white ml-1" />
+          )}
         </button>
 
-        <input
-          className="w-full accent-accent"
-          type="range"
-          min="0"
-          max={videoState.duration || 100}
-          step="1"
-          value={displayTime}
-          onChange={handleSliderChange}
-          onMouseDown={() => { setDragging(true); }}
-          onTouchStart={() => { setDragging(true); }}
-          onMouseUp={handleSliderRelease}
-          onTouchEnd={handleSliderRelease}
-          disabled={!canControl || !videoState.videoId}
-        />
+        <div className="flex-1 flex flex-col gap-1.5 relative group">
+          <input
+            className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-accent focus:outline-none focus:ring-2 focus:ring-accent/50"
+            type="range"
+            min="0"
+            max={videoState.duration || 100}
+            step="1"
+            value={displayTime}
+            onChange={handleSliderChange}
+            onMouseDown={() => { setDragging(true); }}
+            onTouchStart={() => { setDragging(true); }}
+            onMouseUp={handleSliderRelease}
+            onTouchEnd={handleSliderRelease}
+            disabled={!canControl || !videoState.videoId}
+          />
+          {/* Custom progress fill effect */}
+          <div 
+            className="absolute top-0 left-0 h-2 bg-accent rounded-full pointer-events-none transition-all duration-150"
+            style={{ width: `${(displayTime / (videoState.duration || 100)) * 100}%` }}
+          />
+        </div>
 
-        <span className="text-xs text-muted min-w-[5.5rem] text-right select-none">
+        <span className="text-xs font-mono font-medium text-muted/80 min-w-[5.5rem] text-right select-none bg-black/40 px-2 py-1 rounded-md border border-white/5">
           {formatTime(displayTime)} / {formatTime(videoState.duration || 0)}
         </span>
       </div>
 
-      <div className="flex gap-2 items-center">
+      {/* URL Input Row */}
+      <div className="relative flex items-center w-full">
+        <div className="absolute left-3.5 text-muted">
+          {canControl ? <Search className="w-4 h-4" /> : <Link className="w-4 h-4" />}
+        </div>
         <input
-          className="input flex-1"
+          className="w-full bg-black/40 border border-white/10 focus:border-accent text-sm py-3 pl-10 pr-28 rounded-xl transition-all placeholder:text-muted/50 disabled:opacity-60"
           type="text"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && canControl && loadVideo()}
           placeholder={
             canControl
-              ? "Paste a YouTube URL or video ID..."
-              : "Only the host or moderator can change the video"
+              ? "Paste YouTube URL..."
+              : "Hosts/mods only"
           }
           disabled={!canControl}
         />
         <button
-          className="btn shrink-0"
+          className="absolute right-1.5 btn py-1.5 px-3 sm:px-4 text-xs shadow-md shadow-accent/10 whitespace-nowrap"
           onClick={loadVideo}
           disabled={!canControl || !url.trim()}
         >

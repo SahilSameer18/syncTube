@@ -1,58 +1,36 @@
+import { FastForward, Link as LinkIcon, Shield, MessageSquare, Zap, MonitorSmartphone } from "lucide-react";
+
 export default function Features() {
   const featuresList = [
     {
       title: "Real-time Playback Sync",
       desc: "Experience sub-millisecond video synchronization. When the host plays, pauses, or seeks, everyone's player responds instantly.",
-      icon: (
-        <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      )
+      icon: <FastForward className="w-6 h-6 text-accent" />
     },
     {
       title: "Flexible Video Formats",
       desc: "Paste any YouTube link, custom MP4 source, or live stream to spin up a watch room instantly.",
-      icon: (
-        <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-        </svg>
-      )
+      icon: <LinkIcon className="w-6 h-6 text-accent" />
     },
     {
       title: "Granular Host Controls",
       desc: "Lock controls to host-only or unlock them for everyone. Manage participants and transfer hosting privileges seamlessly.",
-      icon: (
-        <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-        </svg>
-      )
+      icon: <Shield className="w-6 h-6 text-accent" />
     },
     {
       title: "Interactive Chat & Reactions",
       desc: "Talk in real time, check when users leave or join, and share live emoji reactions to capture key moments.",
-      icon: (
-        <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-        </svg>
-      )
+      icon: <MessageSquare className="w-6 h-6 text-accent" />
     },
     {
       title: "Zero Setup Required",
       desc: "No registrations, card details, or emails. Open the lobby, name your profile, create a room, and start watching.",
-      icon: (
-        <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      )
+      icon: <Zap className="w-6 h-6 text-accent" />
     },
     {
       title: "Responsive Across Devices",
       desc: "Fully optimized layout ensuring seamless synchronicity and interface sizing on desktops, tablets, and phones.",
-      icon: (
-        <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-        </svg>
-      )
+      icon: <MonitorSmartphone className="w-6 h-6 text-accent" />
     }
   ];
 

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { Play } from "lucide-react";
 
 export default function Footer() {
   const navigate = useNavigate();
@@ -42,7 +43,9 @@ export default function Footer() {
               onClick={() => navigate("/")} 
               className="flex items-center gap-2 cursor-pointer group"
             >
-              <span className="text-2xl text-accent group-hover:scale-110 transition-transform duration-200">▶</span>
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-accent to-accent-dark flex items-center justify-center group-hover:scale-110 transition-transform duration-200 shadow-md shadow-accent/20 border border-white/10">
+                <Play className="w-4 h-4 text-white fill-white ml-0.5" />
+              </div>
               <span className="font-extrabold text-xl tracking-tight text-primary">
                 SyncTube<span className="text-accent">.</span>
               </span>

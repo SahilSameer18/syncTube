@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Check } from "lucide-react";
 
 export default function Pricing() {
   const navigate = useNavigate();
@@ -146,9 +147,7 @@ export default function Pricing() {
                 <ul className="space-y-3.5 mb-8 flex-1">
                   {plan.features.map((feat, fidx) => (
                     <li key={fidx} className="flex items-start gap-2.5 text-xs sm:text-sm text-muted">
-                      <svg className="w-5 h-5 text-accent shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                      </svg>
+                      <Check className="w-4 h-4 text-accent shrink-0 mt-0.5" />
                       <span className="text-[#c7c7e2]">{feat}</span>
                     </li>
                   ))}

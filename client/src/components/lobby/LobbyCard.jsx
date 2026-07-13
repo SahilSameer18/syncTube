@@ -1,3 +1,5 @@
+import { AlertCircle, ArrowRight, User, Link2 } from "lucide-react";
+
 export default function LobbyCard({
   tab,
   setTab,
@@ -11,9 +13,14 @@ export default function LobbyCard({
   handleJoin,
 }) {
   return (
-    <div className="w-full bg-surface/50 border border-line backdrop-blur-md p-6 sm:p-8 rounded-2xl shadow-xl shadow-black/10">
+    <div className="w-full glass-card p-6 sm:p-10 rounded-3xl shadow-2xl">
       {/* Tab Switcher */}
-      <div className="flex gap-1 bg-bg border border-line/60 rounded-xl p-1 mb-6">
+      <div className="flex bg-black/50 border border-white/5 rounded-xl p-1 mb-8 relative">
+        {/* Animated Background Pill */}
+        <div 
+          className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-accent rounded-lg shadow-md transition-transform duration-300 ease-out`}
+          style={{ transform: tab === "create" ? "translateX(0)" : "translateX(100%)" }}
+        />
         {["create", "join"].map((t) => (
           <button
             key={t}
@@ -21,10 +28,8 @@ export default function LobbyCard({
               setTab(t);
               clearError();
             }}
-            className={`flex-1 py-2.5 rounded-lg text-xs sm:text-sm font-semibold cursor-pointer border-none transition-all duration-200
-              ${tab === t 
-                ? "bg-accent text-white shadow-md shadow-accent/20 scale-[1.01]" 
-                : "bg-transparent text-muted hover:text-primary"}`}
+            className={`flex-1 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider cursor-pointer border-none relative z-10 transition-colors duration-300
+              ${tab === t ? "text-white" : "bg-transparent text-muted hover:text-primary"}`}
           >
             {t === "create" ? "Create Room" : "Join Room"}
           </button>
@@ -32,63 +37,74 @@ export default function LobbyCard({
       </div>
 
       {/* Name Field */}
-      <div className="mb-4.5">
-        <label className="block text-xs text-muted font-bold uppercase tracking-wider mb-2">
-          Your Name
+      <div className="mb-5 relative">
+        <label className="block text-[10px] text-muted font-bold uppercase tracking-widest mb-2 ml-1">
+          Display Name
         </label>
-        <input
-          className="input transition-all duration-200 py-2.5 px-3.5"
-          type="text"
-          placeholder="e.g. Alex"
-          value={username}
-          onChange={(e) => {
-            setUsername(e.target.value);
-            clearError();
-          }}
-          maxLength={20}
-        />
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
+            <User className="w-4 h-4" />
+          </div>
+          <input
+            className="w-full bg-black/40 border border-white/10 focus:border-accent text-sm py-3.5 pl-10 pr-4 rounded-xl transition-all duration-300 placeholder:text-muted/50 focus:shadow-[0_0_15px_rgba(139,92,246,0.15)] outline-none text-white"
+            type="text"
+            placeholder="e.g. Alex"
+            value={username}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              clearError();
+            }}
+            onKeyDown={(e) => e.key === "Enter" && (tab === "create" ? handleCreate() : handleJoin())}
+            maxLength={20}
+          />
+        </div>
       </div>
 
       {/* Room Code Field — only on join tab */}
       {tab === "join" && (
-        <div className="mb-4.5 animate-slideIn">
-          <label className="block text-xs text-muted font-bold uppercase tracking-wider mb-2">
-            Room Code or Shared Link
+        <div className="mb-5 animate-slideIn relative">
+          <label className="block text-[10px] text-muted font-bold uppercase tracking-widest mb-2 ml-1">
+            Room Code / Link
           </label>
-          <input
-            className="input tracking-widest uppercase transition-all duration-200 py-2.5 px-3.5"
-            type="text"
-            placeholder="e.g. X7KP2Q"
-            value={roomCode}
-            onChange={(e) => {
-              setRoomCode(e.target.value);
-              clearError();
-            }}
-            maxLength={120}
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
+              <Link2 className="w-4 h-4" />
+            </div>
+            <input
+              className="w-full bg-black/40 border border-white/10 focus:border-accent text-sm tracking-widest uppercase py-3.5 pl-10 pr-4 rounded-xl transition-all duration-300 placeholder:text-muted/50 focus:shadow-[0_0_15px_rgba(139,92,246,0.15)] outline-none text-white"
+              type="text"
+              placeholder="e.g. X7KP2Q"
+              value={roomCode}
+              onChange={(e) => {
+                setRoomCode(e.target.value);
+                clearError();
+              }}
+              onKeyDown={(e) => e.key === "Enter" && handleJoin()}
+              maxLength={120}
+            />
+          </div>
         </div>
       )}
 
       {error && (
-        <div className="flex items-center gap-2 text-danger text-xs font-semibold mb-4.5 bg-danger/10 border border-danger/20 px-3.5 py-2.5 rounded-lg animate-fadeIn">
-          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
+        <div className="flex items-center gap-2 text-danger text-xs font-semibold mb-5 bg-danger/10 border border-danger/20 px-4 py-3 rounded-xl animate-fadeIn">
+          <AlertCircle className="w-4 h-4 shrink-0" />
           {error}
         </div>
       )}
 
       <button
-        className="btn w-full py-3 shadow-lg shadow-accent/20 hover:shadow-accent/30 hover:scale-[1.01] mt-2 active:scale-[0.99] transition-all duration-150"
+        className="btn w-full py-4 mt-2 rounded-xl text-sm tracking-wide shadow-lg shadow-accent/20 hover:shadow-accent/40 active:scale-[0.98] transition-all duration-300 group"
         onClick={tab === "create" ? handleCreate : handleJoin}
       >
         {tab === "create" ? "Create Room" : "Join Room"}
+        <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-1.5 transition-transform" />
       </button>
 
-      <p className="text-center text-muted text-[11px] leading-relaxed mt-5">
+      <p className="text-center text-muted/60 text-[10px] font-medium tracking-wide leading-relaxed mt-6">
         {tab === "create"
-          ? "A unique 6-character room code will be generated for you to invite others."
-          : "Ask the watch party host for their room code or room invitation link."}
+          ? "A unique 6-character room code will be generated."
+          : "Ask the host for their room code or invitation link."}
       </p>
     </div>
   );

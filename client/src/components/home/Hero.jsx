@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Play, Users, ArrowRight } from "lucide-react";
 
 export default function Hero() {
   const navigate = useNavigate();
   
-  // States for simulated stats
-  const [stats, setStats] = useState({ rooms: 118420, hours: 4768290 });
   // Simulated chat messages
   const [mockChats, setMockChats] = useState([
     { id: 1, name: "Alex", text: "Wow, this video is hilarious! 😄", color: "text-[#3b82f6]" },
@@ -17,22 +16,14 @@ export default function Hero() {
   const [isPlaying, setIsPlaying] = useState(true);
 
   useEffect(() => {
-    // 1. Stats Counter Incrementor
-    const statsInterval = setInterval(() => {
-      setStats(prev => ({
-        rooms: prev.rooms + Math.floor(Math.random() * 2),
-        hours: prev.hours + Math.floor(Math.random() * 3) + 1
-      }));
-    }, 4000);
-
-    // 2. Playback progress bar simulation
+    // Playback progress bar simulation
     const playbackInterval = setInterval(() => {
       if (isPlaying) {
         setPlayerProgress(prev => (prev >= 100 ? 0 : prev + 0.5));
       }
     }, 150);
 
-    // 3. Simulated floating chat messages
+    // Simulated floating chat messages
     const chatTemplates = [
       { name: "John", text: "Wait, pause it for a sec!", color: "text-[#f59e0b]" },
       { name: "Mia", text: "Look at the background detail! 😮", color: "text-[#ec4899]" },
@@ -50,13 +41,11 @@ export default function Hero() {
           ...chatTemplates[templateIndex % chatTemplates.length]
         };
         templateIndex++;
-        // Keep only the last 4 chat messages in view
         return [...prev.slice(-3), nextChat];
       });
     }, 3000);
 
     return () => {
-      clearInterval(statsInterval);
       clearInterval(playbackInterval);
       clearInterval(chatInterval);
     };
@@ -73,14 +62,14 @@ export default function Hero() {
           
           {/* Left Column: Headline & Action */}
           <div className="lg:col-span-7 text-center lg:text-left space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-line bg-surface/50 text-xs font-semibold text-accent-light tracking-wide text-[#a78bfa] backdrop-blur-sm animate-pulse">
-               Introducing SyncTube Pro Watch Parties
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/30 bg-accent/10 text-xs font-semibold tracking-wide text-[#a78bfa] backdrop-blur-sm animate-pulse shadow-lg shadow-accent/10">
+               <Users className="w-3.5 h-3.5" /> Introducing SyncTube Pro Watch Parties
             </div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight">
               Watch Videos Together,{" "}
               <span className="bg-gradient-to-r from-accent via-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent">
-                Perfecty in Sync.
+                Perfectly in Sync.
               </span>
             </h1>
             
@@ -88,58 +77,30 @@ export default function Hero() {
               SyncTube lets you create watch rooms for YouTube, streams, and files. Chat, speak, and laugh with friends in real-time with sub-millisecond playback synchronization.
             </p>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
               <button
                 onClick={() => navigate("/lobby")}
-                className="btn w-full sm:w-auto px-8 py-3.5 text-base shadow-lg shadow-accent/25 hover:shadow-accent/40 hover:scale-[1.02]"
+                className="btn w-full sm:w-auto px-8 py-3.5 text-base shadow-lg shadow-accent/25 hover:shadow-accent/40 hover:scale-[1.02] rounded-full group"
               >
-                Create a Room
+                Create a Room <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
               </button>
-              {/* <a
-                href="#pricing"
-                className="btn btn-ghost w-full sm:w-auto px-8 py-3.5 text-base hover:scale-[1.02] flex items-center justify-center gap-2"
-              >
-                View Plans
-              </a> */}
             </div>
-
-            {/* Live Stats */}
-            {/* <div className="pt-8 grid grid-cols-3 gap-4 border-t border-line/60 max-w-md mx-auto lg:mx-0">
-              <div>
-                <div className="text-xl sm:text-2xl font-bold text-primary">
-                  {stats.rooms.toLocaleString()}
-                </div>
-                <div className="text-xs text-muted font-medium mt-1">Rooms Opened</div>
-              </div>
-              <div>
-                <div className="text-xl sm:text-2xl font-bold text-primary">
-                  {(stats.hours / 1000000).toFixed(1)}M+
-                </div>
-                <div className="text-xs text-muted font-medium mt-1">Hours Synced</div>
-              </div>
-              <div>
-                <div className="text-xl sm:text-2xl font-bold text-accent font-mono">
-                  &lt; 5ms
-                </div>
-                <div className="text-xs text-muted font-medium mt-1">Sync Latency</div>
-              </div>
-            </div> */}
           </div>
 
           {/* Right Column: Live Synced Party Simulation Mockup */}
           <div className="lg:col-span-5 relative w-full max-w-lg mx-auto lg:max-w-none">
             {/* Glowing borders around mockup */}
-            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-accent to-[#60a5fa] opacity-25 blur-lg" />
+            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-accent to-[#60a5fa] opacity-30 blur-xl animate-pulse" />
             
             {/* Mockup Container */}
-            <div className="relative rounded-2xl bg-surface border border-line overflow-hidden shadow-2xl flex flex-col h-[320px] sm:h-[350px]">
+            <div className="relative rounded-2xl glass border border-white/10 overflow-hidden glow-accent flex flex-col h-[320px] sm:h-[350px]">
               {/* Mockup Top Header */}
-              <div className="bg-surface2 px-4 py-2.5 border-b border-line flex items-center justify-between text-xs text-muted font-medium">
+              <div className="bg-surface/80 backdrop-blur-md px-4 py-3 border-b border-white/5 flex items-center justify-between text-xs text-muted font-medium">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
-                  <span className="text-[10px] text-muted ml-2 font-mono bg-bg px-2 py-0.5 rounded border border-line">
+                  <span className="text-[10px] text-muted ml-2 font-mono bg-black/50 px-2 py-0.5 rounded border border-white/5">
                     sync-room-X7KP2Q
                   </span>
                 </div>
@@ -158,39 +119,35 @@ export default function Hero() {
                 {/* Simulated Player (Left Side) */}
                 <div className="flex-1 flex flex-col bg-[#05050a] relative group/player">
                   {/* Mock Video content */}
-                  <div className="flex-1 flex items-center justify-center relative">
-                    <div className="absolute inset-0 bg-cover bg-center filter brightness-90 bg-[url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400&auto=format&fit=crop')]" />
+                  <div className="flex-1 flex items-center justify-center relative overflow-hidden bg-[url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400&auto=format&fit=crop')] bg-cover bg-center">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
                     
                     {/* Simulated Play overlay icon */}
                     <button 
                       onClick={() => setIsPlaying(!isPlaying)}
-                      className="relative z-10 w-12 h-12 rounded-full bg-accent/90 hover:bg-accent text-white flex items-center justify-center hover:scale-105 transition-all duration-200 shadow-md cursor-pointer"
+                      className="relative z-10 w-14 h-14 rounded-full bg-accent/90 hover:bg-accent text-white flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-xl shadow-accent/40 cursor-pointer backdrop-blur-sm"
                     >
-                      {isPlaying ? (
-                        <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                      ) : (
-                        <svg className="w-5 h-5 fill-current ml-1" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                      )}
+                      <Play className={`w-6 h-6 fill-white ${isPlaying ? '' : 'ml-1'}`} />
                     </button>
 
                     {/* Syced Avatars floating in player */}
                     <div className="absolute bottom-6 left-4 flex gap-1.5">
-                      <div className="w-6 h-6 rounded-full bg-[#3b82f6] border border-surface flex items-center justify-center text-[10px] font-bold text-white shadow-lg">A</div>
-                      <div className="w-6 h-6 rounded-full bg-[#10b981] border border-surface flex items-center justify-center text-[10px] font-bold text-white shadow-lg">S</div>
-                      <div className="w-6 h-6 rounded-full bg-[#ec4899] border border-surface flex items-center justify-center text-[10px] font-bold text-white shadow-lg">M</div>
-                      <div className="w-6 h-6 rounded-full bg-[#f59e0b] border border-surface flex items-center justify-center text-[10px] font-bold text-white shadow-lg">J</div>
+                      <div className="w-7 h-7 rounded-full bg-[#3b82f6] border-2 border-black/50 flex items-center justify-center text-[10px] font-bold text-white shadow-lg z-10 hover:-translate-y-1 transition-transform">A</div>
+                      <div className="w-7 h-7 rounded-full bg-[#10b981] border-2 border-black/50 flex items-center justify-center text-[10px] font-bold text-white shadow-lg -ml-3 z-20 hover:-translate-y-1 transition-transform">S</div>
+                      <div className="w-7 h-7 rounded-full bg-[#ec4899] border-2 border-black/50 flex items-center justify-center text-[10px] font-bold text-white shadow-lg -ml-3 z-30 hover:-translate-y-1 transition-transform">M</div>
+                      <div className="w-7 h-7 rounded-full bg-[#f59e0b] border-2 border-black/50 flex items-center justify-center text-[10px] font-bold text-white shadow-lg -ml-3 z-40 hover:-translate-y-1 transition-transform">J</div>
                     </div>
                   </div>
 
                   {/* Player seek/control bar */}
-                  <div className="h-10 bg-surface/90 backdrop-blur-sm border-t border-line px-3 flex items-center gap-3">
+                  <div className="h-10 bg-black/60 backdrop-blur-md border-t border-white/10 px-3 flex items-center gap-3">
                     <span className="text-[10px] text-muted font-mono">
                       {`0:${Math.floor((playerProgress / 100) * 180).toString().padStart(2, "0")}`} / 3:00
                     </span>
-                    <div className="flex-1 h-1 bg-line rounded-full overflow-hidden relative cursor-pointer">
+                    <div className="flex-1 h-1 bg-white/20 rounded-full overflow-hidden relative cursor-pointer">
                       <div 
-                        className="absolute top-0 left-0 h-full bg-accent transition-all duration-150"
+                        className="absolute top-0 left-0 h-full bg-accent transition-all duration-150 shadow-[0_0_10px_rgba(139,92,246,0.8)]"
                         style={{ width: `${playerProgress}%` }}
                       />
                     </div>
@@ -198,20 +155,20 @@ export default function Hero() {
                 </div>
 
                 {/* Simulated Chat Panel (Right Side) */}
-                <div className="w-[140px] sm:w-[170px] bg-surface border-l border-line flex flex-col">
+                <div className="w-[140px] sm:w-[170px] bg-black/40 backdrop-blur-sm border-l border-white/10 flex flex-col">
                   {/* Chat logs */}
                   <div className="flex-1 p-2 space-y-2.5 overflow-y-auto min-h-0 select-none">
                     {mockChats.map((chat) => (
                       <div key={chat.id} className="text-[10px] leading-snug animate-slideIn">
                         <span className={`font-semibold ${chat.color} mr-1`}>{chat.name}:</span>
-                        <span className="text-primary">{chat.text}</span>
+                        <span className="text-primary/90">{chat.text}</span>
                       </div>
                     ))}
                   </div>
 
                   {/* Chat input footer */}
-                  <div className="p-1.5 border-t border-line bg-surface2">
-                    <div className="w-full text-[9px] bg-bg border border-line rounded px-1.5 py-1 text-muted">
+                  <div className="p-1.5 border-t border-white/10 bg-black/50">
+                    <div className="w-full text-[9px] bg-white/5 border border-white/10 rounded-md px-2 py-1.5 text-muted/70">
                       Type message...
                     </div>
                   </div>

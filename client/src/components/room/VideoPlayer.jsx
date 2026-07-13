@@ -169,8 +169,8 @@ export default function VideoPlayer() {
   }, [ready]);
 
   return (
-    <div className="video-wrapper">
-      <div id={PLAYER_DIV_ID} className="w-full h-full" />
+    <div className="video-wrapper glow-accent shadow-[0_0_40px_rgba(139,92,246,0.15)] border border-white/5 rounded-2xl overflow-hidden relative">
+      <div id={PLAYER_DIV_ID} className="w-full h-full relative z-10" />
 
       {/* Block interaction for participants (Watch-only) */}
       {myRole === "participant" && (
@@ -179,11 +179,13 @@ export default function VideoPlayer() {
 
       {/* shown before any video is loaded */}
       {!videoState.videoId && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-bg">
-          <SkeletonBlock height="100%" width="100%" style={{ position: "absolute", inset: 0, borderRadius: 0, opacity: 0.6 }} />
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-black/90 backdrop-blur-md">
+          <SkeletonBlock height="100%" width="100%" style={{ position: "absolute", inset: 0, borderRadius: 0, opacity: 0.2 }} />
           <div className="relative z-10 flex flex-col items-center gap-2 text-center px-4">
-            <span className="text-4xl opacity-30">▶</span>
-            <p className="text-muted text-sm">Paste a YouTube URL below to start watching</p>
+            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-2 border border-white/10">
+              <span className="text-4xl opacity-50">▶</span>
+            </div>
+            <p className="text-muted/80 text-sm font-medium">Paste a YouTube URL below to start watching</p>
           </div>
         </div>
       )}

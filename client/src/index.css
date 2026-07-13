@@ -3,15 +3,34 @@
 /* ── @theme: registers colors as Tailwind utilities ──
    bg-bg, text-muted, bg-accent, border-line, etc. all work now */
 @theme {
-  --color-bg:           #09090f;
-  --color-surface:      #0f0f1a;
-  --color-surface2:     #16162a;
-  --color-line:         #1e1e35;
-  --color-accent:       #7c3aed;
-  --color-accent-dark:  #6d28d9;
-  --color-primary:      #ededfa;
-  --color-muted:        #6b6b8f;
+  --color-bg:           #0a0a0a;
+  --color-surface:      #111111;
+  --color-surface2:     #1a1a1a;
+  --color-line:         #2a2a2a;
+  --color-accent:       #8b5cf6;
+  --color-accent-dark:  #7c3aed;
+  --color-primary:      #f8fafc;
+  --color-muted:        #94a3b8;
   --color-danger:       #ef4444;
+}
+
+/* Glassmorphism utilities */
+.glass {
+  background: rgba(17, 17, 17, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-card {
+  background: linear-gradient(145deg, rgba(26,26,26,0.9) 0%, rgba(17,17,17,0.9) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glow-accent {
+  box-shadow: 0 0 20px 2px rgba(139, 92, 246, 0.2);
 }
 
 /* keep these so the custom CSS classes below (.btn, .input etc.) still compile */
@@ -201,7 +220,11 @@ input:focus {
   .room-sidebar {
     border-left: none;
     border-top: 1px solid var(--border);
-    height: 75vh;
+    height: 600px;
+  }
+
+  .participants-section {
+    max-height: 180px;
   }
 }
 

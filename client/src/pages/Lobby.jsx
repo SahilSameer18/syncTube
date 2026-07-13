@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LobbyHeader from "../components/lobby/LobbyHeader";
+import LobbyBrand from "../components/lobby/LobbyBrand";
 import LobbyCard from "../components/lobby/LobbyCard";
 
 // same logic as server/utils/roomId.js
@@ -54,27 +55,38 @@ export default function Lobby() {
   const clearError = () => setError("");
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden">
-      
-      {/* Background decorations, absolute header back navigation, and titles */}
+    <div className="min-h-screen bg-bg flex flex-col lg:flex-row relative overflow-hidden">
       <LobbyHeader />
 
-      {/* Main glassmorphic tab forms and form inputs */}
-      <div className="w-full max-w-md relative z-10">
-        <LobbyCard
-          tab={tab}
-          setTab={setTab}
-          username={username}
-          setUsername={setUsername}
-          roomCode={roomCode}
-          setRoomCode={setRoomCode}
-          error={error}
-          clearError={clearError}
-          handleCreate={handleCreate}
-          handleJoin={handleJoin}
-        />
-      </div>
+      {/* Left Side: Brand & Visuals */}
+      <LobbyBrand />
 
+      {/* Right Side: Interactive Form */}
+      <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 relative min-h-screen lg:min-h-0">
+        {/* Mobile Background Glows (Since left panel is hidden) */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-72 h-72 bg-accent opacity-25 blur-[120px] rounded-full lg:hidden pointer-events-none" />
+        
+        <div className="w-full max-w-md relative z-10 pt-16 lg:pt-0">
+           {/* Mobile Title */}
+           <div className="lg:hidden text-center mb-8 animate-fadeIn">
+             <h2 className="text-3xl font-extrabold text-primary tracking-tight">Join the Party</h2>
+             <p className="text-muted text-sm mt-2">Create or enter a room code below.</p>
+           </div>
+           
+           <LobbyCard
+             tab={tab}
+             setTab={setTab}
+             username={username}
+             setUsername={setUsername}
+             roomCode={roomCode}
+             setRoomCode={setRoomCode}
+             error={error}
+             clearError={clearError}
+             handleCreate={handleCreate}
+             handleJoin={handleJoin}
+           />
+        </div>
+      </div>
     </div>
   );
 }

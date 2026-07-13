@@ -16,6 +16,7 @@ export default function Room() {
   const location = useLocation();
   const { myRole, participants } = useRoom();
   const [joined, setJoined] = useState(false);
+  const [theaterMode, setTheaterMode] = useState(false);
 
   const username = location.state?.username || "Anonymous";
 
@@ -90,19 +91,23 @@ export default function Room() {
         roomId={roomId} 
         participants={participants} 
         myRole={myRole} 
+        theaterMode={theaterMode}
+        setTheaterMode={setTheaterMode}
       />
 
       {/* Main Room Workspace Layout */}
-      <div className="room-layout">
-        <div className="room-main">
+      <div className={`room-layout ${theaterMode ? '!block' : ''}`}>
+        <div className={`room-main ${theaterMode ? 'w-full max-w-6xl mx-auto h-full' : ''}`}>
           <VideoPlayer />
           <Controls />
         </div>
 
-        <div className="room-sidebar">
-          <ParticipantList />
-          <Chat />
-        </div>
+        {!theaterMode && (
+          <div className="room-sidebar bg-black/20 backdrop-blur-md">
+            <ParticipantList />
+            <Chat />
+          </div>
+        )}
       </div>
     </div>
   );
